@@ -11,16 +11,18 @@ source:
   sha256: 9535e2ffe8336cbe4e403c6066f0539265bc8dd5e0f2827ff4cc955190aca49e
 
 build:
-  number: 0
+  number: 1
   skip: true  # [win]
   rpaths:
     - lib/
+  missing_dso_whitelist:
+    - "*/libcuda.*"    # [linux]
 
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - {{ compiler('cuda') }}  # [linux and cuda_compiler_version != 'None']
+    - {{ compiler('cuda') }}  # [linux]
     - cmake
     - make
   host:
