@@ -12,7 +12,7 @@ source:
 
 build:
   number: 1
-  skip: true  # [win or (cuda_compiler_version in (undefined, 'None'))]
+  skip: true  # [(win) or (cuda_compiler_version in (undefined, 'None') and (linux))]
   rpaths:
     - lib/
 
