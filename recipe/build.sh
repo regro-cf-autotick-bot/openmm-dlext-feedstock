@@ -18,6 +18,9 @@ if [[ "$target_platform" == osx* ]]; then
     CMAKE_FLAGS+=" -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}"
 fi
 
+# Disambiguate swig location
+CMAKE_FLAGS+=" -DSWIG_EXECUTABLE=$(which swig)"
+
 # Build and install
 BUILD_PATH=build/openmm-dlext
 cmake -S . -B $BUILD_PATH $CMAKE_FLAGS -Wno-dev

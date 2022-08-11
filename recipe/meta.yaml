@@ -11,13 +11,18 @@ source:
   sha256: 9535e2ffe8336cbe4e403c6066f0539265bc8dd5e0f2827ff4cc955190aca49e
 
 build:
-  number: 1
-  skip: true  # [(win) or (cuda_compiler_version in (undefined, 'None') and (linux))]
+  number: 2
+  skip: true  # [(win) or (cuda_compiler_version in (undefined, 'None') and linux) or (osx and py==36)]
   rpaths:
     - lib/
 
 requirements:
   build:
+    - python                                 # [build_platform != target_platform]
+    - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+    - swig                                   # [build_platform != target_platform]
+    - pybind11                               # [build_platform != target_platform]
+    - dlpack                                 # [build_platform != target_platform]
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - {{ compiler('cuda') }}  # [linux]
