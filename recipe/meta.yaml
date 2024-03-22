@@ -16,7 +16,8 @@ build:
   skip: true  # [python_impl == "pypy"]
   skip: true  # [(win) or (cuda_compiler_version in (undefined, 'None') and linux) or ((cuda_compiler_version != '10.2') and (ppc64le))]
   missing_dso_whitelist:
-    - "*/libcuda.*"  # [linux]
+    - "*/libcuda.*"    # [linux]
+    - "*/libOpenCL.*"  # [unix]
   rpaths:
     - lib/
 
@@ -29,7 +30,7 @@ requirements:
     - dlpack                                 # [build_platform != target_platform]
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - {{ compiler('cuda') }}  # [linux]
+    - {{ compiler('cuda') }}  # [linux and cuda_compiler_version != "None"]
     - cmake
     - make
   host:
@@ -42,12 +43,9 @@ requirements:
     {% if linux and cuda_major >= 12 %}
     - cuda-version {{ cuda_compiler_version }}
     - cuda-profiler-api
-    - cuda-nvrtc-dev
     - cuda-driver-dev
-    - libcufft-dev
     {% endif %}
   run:
-    - python
     - {{ pin_compatible('openmm', max_pin='x.x') }}
   
 test:
@@ -57,7 +55,7 @@ test:
     - cuda-compat
     {% endif %}
   imports:
-    - openmm_dlext
+    - openmm_dlext  # [cuda_compiler_version == "None"]
 
 about:
   home: https://github.com/SSAGESLabs/openmm-dlext
