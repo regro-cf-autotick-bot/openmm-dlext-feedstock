@@ -46,6 +46,7 @@ requirements:
     - cuda-driver-dev
     {% endif %}
   run:
+    - python
     - {{ pin_compatible('openmm', max_pin='x.x') }}
   
 test:
