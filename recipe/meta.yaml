@@ -1,5 +1,6 @@
 {% set name = "openmm-dlext" %}
 {% set version = "0.2.1" %}
+{% set cuda_major = (cuda_compiler_version | default("0.0", true)).split(".")[0] | int %}
 
 
 package:
@@ -13,7 +14,9 @@ source:
 build:
   number: 8
   skip: true  # [python_impl == "pypy"]
-  skip: true  # [(win) or (cuda_compiler_version in (undefined, 'None') and linux) or (osx and py==310)]
+  skip: true  # [(win) or (cuda_compiler_version in (undefined, 'None') and linux) or ((cuda_compiler_version != '10.2') and (ppc64le))]
+  missing_dso_whitelist:
+    - "*/libcuda.*"  # [linux]
   rpaths:
     - lib/
 
@@ -36,14 +39,26 @@ requirements:
     - openmm
     - dlpack >=0.5
     - pybind11
+    {% if linux and cuda_major >= 12 %}
+    - cuda-version {{ cuda_compiler_version }}
+    - cuda-profiler-api
+    - cuda-nvrtc-dev
+    - cuda-driver-dev
+    - libcufft-dev
+    {% endif %}
   run:
     - python
     - {{ pin_compatible('openmm', max_pin='x.x') }}
   
 test:
+  requires:
+    {% if linux and cuda_major >= 12 %}
+    - cuda-driver-dev
+    - cuda-compat
+    {% endif %}
   imports:
     - openmm_dlext
-  
+
 about:
   home: https://github.com/SSAGESLabs/openmm-dlext
   license: MIT
